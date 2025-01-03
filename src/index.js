@@ -1,3 +1,5 @@
+import "./styles.css";
+
 class ToDo {
     constructor(title, description, dueDate, priority) {
         this.title = title;
@@ -149,6 +151,7 @@ class UIEditor {
     };
 };
 
+// Main
 const app = new Application();
 const ui = new UIEditor();
 
