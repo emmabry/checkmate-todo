@@ -77,26 +77,31 @@ class Application {
         return newToDo;
         };
 
-    removeTodo = function () {
+    removeTodo = function (title) {
+        this.currentProject.toDos = this.currentProject.toDos.filter(todo => todo.title !== title);
+        this.allProjects = this.allProjects.map(project => 
+            project.title === this.currentProject.title ? this.currentProject : project
+        );
+        console.log(this.currentProject.toDos);
         };
+
     completeTodo = function () {
         };
     changePriority = function () {
         };
 };
 
-function appFunctionality() {
-    const projectButtons = document.querySelector('.project-buttons');
-    const taskList = document.querySelector('.todo-list');
-    const projects = document.querySelectorAll('.project');
-    const tasks = document.querySelectorAll('.task');
+class UIEditor {
+    constructor() {
+        this.projectButtons = document.querySelector('.project-buttons');
+        this.taskList = document.querySelector('.todo-list');
+        this.projects = document.querySelectorAll('.project');
+        this.tasks = document.querySelectorAll('.task');
+    }
 
-
-    // Select Project Board
-    projects.forEach(project => {
-        project.addEventListener('click', () => {
-            taskList.innerHTML = '';
-            let currentProject = app.getProject(project.textContent);
+    getProject = function (title) {
+            this.taskList.innerHTML = '';
+            let currentProject = app.getProject(title);
             currentProject.toDos.forEach(toDo => {
                 const task = document.createElement('li');
                 task.classList.add('task');
@@ -104,28 +109,27 @@ function appFunctionality() {
                 const del = document.createElement('button');
                 del.classList.add('delete');
                 del.textContent = 'Delete';
-                task.appendChild(del);
-                taskList.appendChild(task);
-            });
-        });
-    });
 
-    // Add Project
-    const addButton = document.querySelector('.add-project');
-    const name = document.querySelector('.project-name');
-    addButton.addEventListener('click', () => {
+                del.addEventListener('click', () => {
+                    app.removeTodo(toDo.title);
+                    task.remove();
+                });
+
+                task.appendChild(del);
+                this.taskList.appendChild(task);
+            });
+    };
+
+    addProject = function (name) {
         const newProject = app.addProject(name.value);
         const newButton = document.createElement('button');
         newButton.classList.add('project');
         newButton.textContent = newProject.title;
-        projectButtons.appendChild(newButton);
+        this.projectButtons.appendChild(newButton);
         name.value = '';
-    });
+    };
 
-    // Add task
-    const addTask = document.querySelector('.add-task');
-    const taskName = document.querySelector('.task-name');
-    addTask.addEventListener('click', () => {
+    addTask = function (name) {
         const newTask = app.addTodo(taskName.value);
         const taskElement = document.createElement('li');
         taskElement.classList.add('task');
@@ -134,21 +138,36 @@ function appFunctionality() {
         del.classList.add('delete');
         del.textContent = 'Delete';
         taskElement.appendChild(del);
-        taskList.appendChild(taskElement);
-        taskName.value = '';
-    });
 
-    // Delete task
-    const delButtons = document.querySelectorAll('.delete');
-    console.log(delButtons);
-    delButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            console.log('clicked');
-            button.parentElement.remove();
+        del.addEventListener('click', () => {
+            app.removeTodo(newTask.title);
+            taskElement.remove();
         });
-    });
 
+        this.taskList.appendChild(taskElement);
+        taskName.value = '';
+    };
 };
 
 const app = new Application();
-appFunctionality();
+const ui = new UIEditor();
+
+let projects = document.querySelectorAll('.project');
+
+projects.forEach(project => {
+    project.addEventListener('click', () => {
+        ui.getProject(project.textContent);
+    })
+});
+
+const addButton = document.querySelector('.add-project');
+addButton.addEventListener('click', () => {
+    const name = document.querySelector('.project-name');
+    ui.addProject(name);
+});
+
+const addTask = document.querySelector('.add-task');
+const taskName = document.querySelector('.task-name');
+addTask.addEventListener('click', () => {
+    ui.addTask(taskName.value);
+});
