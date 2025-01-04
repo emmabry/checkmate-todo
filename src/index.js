@@ -1,7 +1,7 @@
 import "./styles.css";
 
 class ToDo {
-    static idCounter = 1;
+    static idCounter = 4;
 
     constructor(title, description, dueDate, priority) {
         this.id = ToDo.idCounter++;
@@ -38,6 +38,64 @@ class Application {
                         completed: false
                     }
                 ]   
+            },
+            {
+                title: 'Daily Life',
+                toDos: [
+                    {
+                        id: 1,
+                        title: 'Wash dishes',
+                        description: 'Wash the dishes in the sink',
+                        dueDate: '31-01-2025',
+                        priority: 'Low',
+                        completed: false
+                    },
+                    { 
+                        id: 2,
+                        title: 'Do laundry',
+                        description: 'Wash clothes',
+                        dueDate: '31-01-2025',
+                        priority: 'Medium',
+                        completed: false
+                    },
+                    {
+                        id: 3,
+                        title: 'Buy groceries',
+                        description: 'Buy food',
+                        dueDate: '31-01-2025',
+                        priority: 'High',
+                        completed: false
+                    }
+                ]
+            },
+            {
+                title: 'Coding',
+                toDos: [
+                    {
+                        id: 4,
+                        title: 'Learn JavaScript',
+                        description: 'Learn JavaScript',
+                        dueDate: '31-01-2025',
+                        priority: 'Low',
+                        completed: false
+                    },
+                    {
+                        id: 5,
+                        title: 'Learn React',
+                        description: 'Learn React',
+                        dueDate: '31-01-2025',
+                        priority: 'Medium',
+                        completed: false
+                    },
+                    {
+                        id: 6,
+                        title: 'Learn Node.js',
+                        description: 'Learn Node.js',
+                        dueDate: '31-01-2025',
+                        priority: 'High',
+                        completed: false
+                    }
+                ]
             }
         ];
         this.currentProject = this.allProjects[0];

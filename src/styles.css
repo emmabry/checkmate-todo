@@ -1,92 +1,49 @@
 body {
-    background-color: white;
     margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    height: 100vh;
+    background-color: #F8F9FA;
+    width: 15%;
+    padding: 20px; 
+}
+
+.container {
+    display: flex;
+}
+
+.main-page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.top-bar {
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-radius: 40px;
+    padding: 10px;
+    margin: 10px;
 }
 
 .taskDiv {
     display: flex;
-    justify-content: start;
-    align-items: center;
-    padding-top: 10px;
-    padding-left: 30px;
-    padding-right: 50px;
-    margin: 10px;
+    justify-content: center;
 }
 
-.taskDiv div {
-    width: 50%;
-    height: 100%;
-}
-
-.taskInfo {
-    background-color: #D9EAFD;
-    height: 300px;
-    width: 300px;
+.current-tasks, .taskInfo {
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-radius: 20px;
     padding: 10px;
-}
-
-.projects {
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: stretch;
-    padding-bottom: 0px;
-    padding-top: 10px;
-    padding-left: 10px;
-    margin: 0px;
-    background-color: #D9EAFD;
-}
-
-.project-buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 0px;
-    margin-bottom: 0px;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-.project-buttons button {
-    margin-bottom: 0px;
-    margin-top: 10px;
-    margin-left: 5px;
-    margin-right: 5px;
-    border: none;
-    border-radius: 5px 5px 0 0;
-    padding: 10px;
-    background-color: white;
-    font-size: 16px;
-    
-}
-
-.new-project {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 0;
-    margin-top: 20px;
-    margin-right: 5px;
-    background-color: white;
-    border-radius: 5px 5px 0 0;
-}
-
-.new-project * {
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-}
-
-.new-project input {
-    border: black 0.5px solid;
-    width: 70px;
-}
-
-.new-project button {
-    border: black 0.5px solid;;
-    background-color: white;
+    margin: 10px;
 }
