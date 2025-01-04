@@ -1,18 +1,30 @@
 body {
-    background-color: white;
+    background-color: #D9EAFD;
     margin: 0;
 }
 
 .taskDiv {
     display: flex;
-    justify-content: space-around;
+    justify-content: start;
     align-items: center;
-    padding: 10px;
-    margin: 10px;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 50px;
+
+    margin-top: 0;
+    margin-left: 25px;
+    margin-right: 25px;
+    background-color: white;
+    height: 100vh;
+}
+
+.taskDiv div {
+    width: 50%;
+    height: 100%;
 }
 
 .taskInfo {
-    background-color: #D9EAFD;
+    background-color: white;
     height: 300px;
     width: 300px;
     padding: 10px;
