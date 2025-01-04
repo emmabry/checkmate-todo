@@ -87,8 +87,14 @@ class Application {
         console.log(this.currentProject.toDos);
         };
 
-    completeTodo = function () {
+    completeTodo = function (title) {
+        const todo = this.currentProject.toDos.find(todo => todo.title === title);
+        if (todo) {
+            todo.completed = true;
+        }
+        ui.completeTask(title);
         };
+
     changePriority = function () {
         };
 };
@@ -99,23 +105,50 @@ class UIEditor {
         this.taskList = document.querySelector('.todo-list');
         this.projects = document.querySelectorAll('.project');
         this.tasks = document.querySelectorAll('.task');
-    }
 
+        this.taskList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('checkbox')) {
+                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                app.completeTodo(taskTitle);
+            }
+        });
+
+        this.taskList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('delete')) {
+                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                app.removeTodo(taskTitle);
+                event.target.parentElement.remove();
+            }
+        });
+
+        this.projectButtons.addEventListener('click', (event) => {
+            if (event.target.classList.contains('project')) {
+                const projectTitle = event.target.textContent;
+                ui.getProject(projectTitle);
+            }
+        });
+    }
+    
     getProject = function (title) {
             this.taskList.innerHTML = '';
             let currentProject = app.getProject(title);
             currentProject.toDos.forEach(toDo => {
                 const task = document.createElement('li');
                 task.classList.add('task');
-                task.textContent = toDo.title;
+
+                const taskTitle = document.createElement('span');
+                taskTitle.classList.add('task-title');
+                taskTitle.textContent = toDo.title;
+                task.appendChild(taskTitle);
+
                 const del = document.createElement('button');
                 del.classList.add('delete');
                 del.textContent = 'Delete';
 
-                del.addEventListener('click', () => {
-                    app.removeTodo(toDo.title);
-                    task.remove();
-                });
+                const checkbox = document.createElement('input');
+                checkbox.classList.add('checkbox');
+                checkbox.type = 'checkbox';
+                task.appendChild(checkbox);
 
                 task.appendChild(del);
                 this.taskList.appendChild(task);
@@ -127,41 +160,53 @@ class UIEditor {
         const newButton = document.createElement('button');
         newButton.classList.add('project');
         newButton.textContent = newProject.title;
+        newButton.addEventListener('click', () => {
+            ui.getProject(newButton.textContent);
+        })
         this.projectButtons.appendChild(newButton);
         name.value = '';
     };
 
     addTask = function (name) {
         const newTask = app.addTodo(taskName.value);
+
         const taskElement = document.createElement('li');
         taskElement.classList.add('task');
-        taskElement.textContent = newTask.title;
+
+        const taskTitle = document.createElement('span');
+        taskTitle.classList.add('task-title');
+        taskTitle.textContent = newTask.title;
+        taskElement.appendChild(taskTitle);
+
         const del = document.createElement('button');
         del.classList.add('delete');
         del.textContent = 'Delete';
-        taskElement.appendChild(del);
 
-        del.addEventListener('click', () => {
-            app.removeTodo(newTask.title);
-            taskElement.remove();
-        });
+        const checkbox = document.createElement('input');
+        checkbox.classList.add('checkbox');
+        checkbox.type = 'checkbox';
+        taskElement.appendChild(checkbox);
 
         this.taskList.appendChild(taskElement);
+        taskElement.appendChild(del);
         taskName.value = '';
     };
+
+    completeTask = function (title) {
+        console.log(title);
+        for (const a of document.querySelectorAll("span")) {
+            if (a.textContent.includes(title)) {
+                a.style.textDecoration = 'line-through';
+            }
+        }
+        };
 };
 
 // Main
 const app = new Application();
 const ui = new UIEditor();
 
-let projects = document.querySelectorAll('.project');
-
-projects.forEach(project => {
-    project.addEventListener('click', () => {
-        ui.getProject(project.textContent);
-    })
-});
+ui.getProject('Default');
 
 const addButton = document.querySelector('.add-project');
 addButton.addEventListener('click', () => {
