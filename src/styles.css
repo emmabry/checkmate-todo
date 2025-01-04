@@ -1,5 +1,6 @@
 body {
-    background-color: aliceblue;
+    background-color: white;
+    margin: 0;
 }
 
 .taskDiv {
@@ -11,17 +12,74 @@ body {
 }
 
 .taskInfo {
-    background-color: white;
+    background-color: #D9EAFD;
     height: 300px;
     width: 300px;
     padding: 10px;
 }
 
 .projects {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: start;
+    align-items: stretch;
+    padding-bottom: 0px;
+    padding-top: 10px;
+    padding-left: 10px;
+    margin: 0px;
+    background-color: #D9EAFD;
+}
+
+.project-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.project-buttons button {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 5px 5px 0 0;
+    padding: 10px;
+    background-color: white;
+    font-size: 16px;
+    
+}
+
+.new-project {
+    display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     padding: 10px;
-    margin: 10px;
+    margin-bottom: 0;
+    margin-top: 20px;
+    margin-right: 5px;
+    background-color: white;
+    border-radius: 5px 5px 0 0;
+}
+
+.new-project * {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.new-project input {
+    border: black 0.5px solid;
+    width: 70px;
+}
+
+.new-project button {
+    border: black 0.5px solid;;
+    background-color: white;
 }
