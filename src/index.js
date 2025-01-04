@@ -1,7 +1,10 @@
 import "./styles.css";
 
 class ToDo {
+    static idCounter = 1;
+
     constructor(title, description, dueDate, priority) {
+        this.id = ToDo.idCounter++;
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
@@ -18,10 +21,6 @@ class Projects {
         this.title = title;
         this.toDos = [];
     }
-
-    addToDo = function (title, description, dueDate, priority) {
-        this.toDos.push(new ToDo(title, description, dueDate, priority));
-    }
 };
 
 class Application {
@@ -31,6 +30,7 @@ class Application {
                 title: 'Default',
                 toDos: [
                     {
+                        id: 0,
                         title: 'Default',
                         description: 'This is a default task',
                         dueDate: '31-01-2025',
@@ -55,7 +55,7 @@ class Application {
         };
 
     addTodo = function (name) {
-        const newToDo = new ToDo(name, "desc", "date", "priority");
+        const newToDo = new ToDo(name, "Add description...", "Add date...", "Add priority...");
         this.currentProject.toDos.push(newToDo);
         return newToDo;
         };
@@ -85,6 +85,15 @@ class Application {
         ui.uncompleteTask(title);
         };
 
+    showTaskInfo = function (title) {
+        const task = this.currentProject.toDos.find(todo => todo.title === title);
+        console.log(task);
+        ui.showTaskInfo(task);
+        }
+
+    editTaskInfo = function () {
+        }
+    
     changePriority = function () {
         };
 };
@@ -95,6 +104,7 @@ class UIEditor {
         this.taskList = document.querySelector('.todo-list');
         this.projects = document.querySelectorAll('.project');
         this.tasks = document.querySelectorAll('.task');
+        this.infoDiv = document.querySelector('.taskInfo');
 
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('checkbox')) {
@@ -111,7 +121,6 @@ class UIEditor {
             }
         });
 
-
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('delete')) {
                 const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
@@ -124,6 +133,45 @@ class UIEditor {
             if (event.target.classList.contains('project')) {
                 const projectTitle = event.target.textContent;
                 ui.getProject(projectTitle);
+            }
+        });
+
+        this.taskList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('task') || event.target.classList.contains('task-title')) {
+                const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
+                console.log(taskTitle);
+                app.showTaskInfo(taskTitle);
+            }
+        });
+
+        this.infoDiv.addEventListener('click', (event) => {
+            if (event.target.classList.contains('task-info-title')) {
+                ui.editTaskInfo('title');
+            }
+            else if (event.target.classList.contains('task-info-description')) {
+                ui.editTaskInfo('description');
+            }
+            else if (event.target.classList.contains('task-info-dueDate')) {
+                ui.editTaskInfo('dueDate');
+            }
+            else if (event.target.classList.contains('task-info-priority')) {
+                ui.editTaskInfo('priority');
+            }
+
+            if (this.infoDiv && this.infoDiv.querySelector('.submit-div')) {
+                return;
+            }
+            else {
+                const submitDiv = document.createElement('div');
+                submitDiv.classList.add('submit-div');
+                this.infoDiv.appendChild(submitDiv);
+                const submit = document.createElement('button');
+                submit.classList.add('submit');
+                submit.textContent = 'Update';
+                submit.addEventListener('click', () => {
+                    ui.submitTaskInfo();
+                });
+                submitDiv.appendChild(submit);
             }
         });
     }
@@ -189,7 +237,90 @@ class UIEditor {
         this.taskList.appendChild(taskElement);
         taskElement.appendChild(del);
         taskName.value = '';
+
+        app.showTaskInfo(newTask.title);
     };
+
+    showTaskInfo = function (task) {
+        const infoDiv = document.querySelector('.taskInfo');
+        infoDiv.innerHTML = '';
+        infoDiv.dataset.id = task.id;
+        const title = document.createElement('h2');
+        title.classList.add('task-info-title');
+        title.textContent = task.title;
+        infoDiv.appendChild(title);
+        const description = document.createElement('p');
+        description.classList.add('task-info-description');
+        description.textContent = task.description;
+        infoDiv.appendChild(description);
+        const dueDate = document.createElement('p');
+        dueDate.classList.add('task-info-dueDate');
+        dueDate.textContent = task.dueDate;
+        infoDiv.appendChild(dueDate);
+        const priority = document.createElement('p');
+        priority.classList.add('task-info-priority');
+        priority.textContent = task.priority;
+        infoDiv.appendChild(priority);
+    };
+
+    editTaskInfo = function (type) {
+        if (type === 'title') {
+            const title = document.querySelector('.task-info-title');
+            const titleEntry = document.createElement('input');
+            titleEntry.classList.add('title-entry');
+            this.infoDiv.replaceChild(titleEntry, title);
+            console.log('editing title');
+        }
+        else if (type === 'description') {
+            const description = document.querySelector('.task-info-description');
+            const descEntry = document.createElement('input');
+            descEntry.classList.add('desc-entry');
+            this.infoDiv.replaceChild(descEntry, description);
+        }
+        else if (type === 'dueDate') {
+            const dueDate = document.querySelector('.task-info-dueDate');
+            const dueDateEntry = document.createElement('input');
+            dueDateEntry.type = 'date';
+            dueDateEntry.classList.add('dueDate-entry');
+            this.infoDiv.replaceChild(dueDateEntry, dueDate);
+        }
+        else if (type === 'priority') {
+            const priority = document.querySelector('.task-info-priority');
+            const priorityEntry = document.createElement('select');
+            priorityEntry.classList.add('priority-entry');
+            const options = ['Low', 'Medium', 'High'];
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                priorityEntry.appendChild(opt);
+            });
+            this.infoDiv.replaceChild(priorityEntry, priority);
+        }
+        };
+    
+    submitTaskInfo = function () {
+        const taskID = this.infoDiv.dataset.id;
+        const task = app.currentProject.toDos.find(todo => todo.id == taskID);
+
+        if (this.infoDiv.querySelector('.title-entry')) {
+            task.title = this.infoDiv.querySelector('.title-entry').value;
+            const listTitle = document.querySelector('.task-title');
+            listTitle.textContent = task.title;
+        }
+        if (this.infoDiv.querySelector('.desc-entry')) {
+            task.description = this.infoDiv.querySelector('.desc-entry').value;
+        }
+        if (this.infoDiv.querySelector('.dueDate-entry')) {
+            task.dueDate = this.infoDiv.querySelector('.dueDate-entry').value;
+        }
+        if (this.infoDiv.querySelector('.priority-entry')) {
+            task.priority = this.infoDiv.querySelector('.priority-entry').value;
+        }
+
+        ui.showTaskInfo(task);
+
+        }
 
     // TODO: Handle this in CSS instead
     completeTask = function (title) {
@@ -219,7 +350,9 @@ ui.getProject('Default');
 const addButton = document.querySelector('.add-project');
 addButton.addEventListener('click', () => {
     const name = document.querySelector('.project-name');
+    const newProject = name.value;
     ui.addProject(name);
+    ui.getProject(newProject);
 });
 
 const addTask = document.querySelector('.add-task');
