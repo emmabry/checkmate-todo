@@ -1,0 +1,24 @@
+body {
+    background-color: aliceblue;
+}
+
+.taskDiv {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+}
+
+.taskInfo {
+    background-color: white;
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+}

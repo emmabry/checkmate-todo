@@ -32,31 +32,12 @@ class Application {
                 toDos: [
                     {
                         title: 'Default',
-                        description: 'Default',
-                        dueDate: 'Default',
-                        priority: 'Default',
+                        description: 'This is a default task',
+                        dueDate: '31-01-2025',
+                        priority: 'Medium',
                         completed: false
                     }
                 ]   
-            },
-            {
-                title: 'Project 1',
-                toDos: [
-                    {
-                        title: 'Task 1',
-                        description: 'Description 1',
-                        dueDate: 'Due Date 1',
-                        priority: 'Priority 1',
-                        completed: false
-                    },
-                    {
-                        title: 'Task 2',
-                        description: 'Description 2',
-                        dueDate: 'Due Date 2',
-                        priority: 'Priority 2',
-                        completed: false
-                    }
-                ]
             }
         ];
         this.currentProject = this.allProjects[0];
@@ -95,6 +76,15 @@ class Application {
         ui.completeTask(title);
         };
 
+    uncompleteTodo = function (title) {
+        const todo = this.currentProject.toDos.find(todo => todo.title === title);
+        console.log('uncompleting')
+        if (todo) {
+            todo.completed = false;
+        }
+        ui.uncompleteTask(title);
+        };
+
     changePriority = function () {
         };
 };
@@ -109,9 +99,18 @@ class UIEditor {
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('checkbox')) {
                 const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                event.target.classList.toggle('checkbox-ticked');
+                event.target.classList.remove('checkbox');
                 app.completeTodo(taskTitle);
             }
+            else if (event.target.classList.contains('checkbox-ticked')) {
+                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                event.target.classList.toggle('checkbox');
+                event.target.classList.remove('checkbox-ticked');
+                app.uncompleteTodo(taskTitle);
+            }
         });
+
 
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('delete')) {
@@ -128,7 +127,7 @@ class UIEditor {
             }
         });
     }
-    
+
     getProject = function (title) {
             this.taskList.innerHTML = '';
             let currentProject = app.getProject(title);
@@ -192,6 +191,7 @@ class UIEditor {
         taskName.value = '';
     };
 
+    // TODO: Handle this in CSS instead
     completeTask = function (title) {
         console.log(title);
         for (const a of document.querySelectorAll("span")) {
@@ -200,6 +200,14 @@ class UIEditor {
             }
         }
         };
+
+    uncompleteTask = function (title) {
+        for (const a of document.querySelectorAll("span")) {
+            if (a.textContent.includes(title)) {
+                a.style.textDecoration = 'none';
+            }
+        }
+        }
 };
 
 // Main
