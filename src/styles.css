@@ -164,6 +164,10 @@ body {
     line-height: 1.6; 
   }
 
+.completed {
+    text-decoration: line-through;
+    color: grey;
+}
 ul {
     list-style-type: none;
     padding-left: 0;
@@ -254,11 +258,34 @@ label {
     top: 1px;
 }
 
-.this-info {
+.this-info{
     display: flex;
     align-items: center;
 }
 
+.add-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 15px;
+    margin-bottom: 10px;
+}
+
+.add-div input {
+    width: 75%;
+    height: 30px;
+    border: 1px solid #E9ECEF;
+    border-radius: 5px;
+    padding-inline: 10px;
+}
+
+.add-div button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
 .priority {
     font-size: 40px;
     position: relative;
