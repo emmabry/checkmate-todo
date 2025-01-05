@@ -37,7 +37,7 @@ class Application {
                         id: 0,
                         title: 'Default',
                         description: 'This is a default task',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-31',
                         priority: 'Medium',
                         completed: false
                     }
@@ -50,7 +50,7 @@ class Application {
                         id: 1,
                         title: 'Wash dishes',
                         description: 'Wash the dishes in the sink',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-31',
                         priority: 'Low',
                         completed: false
                     },
@@ -58,7 +58,7 @@ class Application {
                         id: 2,
                         title: 'Do laundry',
                         description: 'Wash clothes',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-22',
                         priority: 'Medium',
                         completed: false
                     },
@@ -66,7 +66,7 @@ class Application {
                         id: 3,
                         title: 'Buy groceries',
                         description: 'Buy food',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-31',
                         priority: 'High',
                         completed: false
                     }
@@ -79,7 +79,7 @@ class Application {
                         id: 4,
                         title: 'Learn JavaScript',
                         description: 'Learn JavaScript',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-31',
                         priority: 'Low',
                         completed: false
                     },
@@ -87,7 +87,7 @@ class Application {
                         id: 5,
                         title: 'Learn React',
                         description: 'Learn React',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-11',
                         priority: 'Medium',
                         completed: false
                     },
@@ -95,7 +95,7 @@ class Application {
                         id: 6,
                         title: 'Learn Node.js',
                         description: 'Learn Node.js',
-                        dueDate: '31-01-2025',
+                        dueDate: '2025-01-24',
                         priority: 'High',
                         completed: false
                     }
@@ -275,6 +275,27 @@ class UIEditor {
                 taskTitle.textContent = toDo.title;
                 info.appendChild(taskTitle);
 
+                const priority = document.createElement('span');
+                    priority.classList.add('priority');
+                    priority.textContent = '•';
+
+                if (toDo.priority === 'Low') {
+                    priority.style.color = '#31C969';
+                }
+                else if (toDo.priority === 'Medium') {
+                    priority.style.color = '#FACB52';
+                }
+                else if (toDo.priority === 'High') {
+                    priority.style.color = '#EF4444';
+                }
+
+                info.appendChild(priority);
+
+                const dueDate = document.createElement('span');
+                dueDate.classList.add('dueDate');
+                dueDate.textContent = toDo.dueDate;
+                info.appendChild(dueDate);
+
                 const del = document.createElement('img');
                 del.classList.add('delete');
                 del.src = deleteIcon;
@@ -298,49 +319,121 @@ class UIEditor {
     addTaskNew = function () {
         const header = document.querySelector('.info-head');
         header.textContent = 'New Task';
+        
         const svg = document.querySelector('.info-svg');
         svg.src = tickIcon;
+        
         const infoDiv = document.querySelector('.info-div');
-        infoDiv.innerHTML = '';
-        const title = document.createElement('input');
+        infoDiv.innerHTML = '';  // Clear existing task inputs
+        
+        const titleWrapper = document.createElement('div');
+        titleWrapper.classList.add('title-wrapper');
+        infoDiv.appendChild(titleWrapper);
+        const titleLabel = document.createElement('label');
+        titleLabel.textContent = 'Title:';
+        titleWrapper.appendChild(titleLabel);
+        const title = document.createElement('textarea');
         title.classList.add('title-entry');
         title.placeholder = 'Title';
-        infoDiv.appendChild(title);
-        const description = document.createElement('input');
+        titleWrapper.appendChild(title);
+        
+        const descriptionWrapper = document.createElement('div');
+        descriptionWrapper.classList.add('description-wrapper');
+        infoDiv.appendChild(descriptionWrapper);
+        const descriptionLabel = document.createElement('label');
+        descriptionLabel.textContent = 'Description:';
+        descriptionWrapper.appendChild(descriptionLabel);
+        const description = document.createElement('textarea');
         description.classList.add('desc-entry');
-        description.placeholder = 'Description';
-        infoDiv.appendChild(description);
+        description.placeholder = 'Add a description';
+        descriptionWrapper.appendChild(description);
+        
+        const dueDateWrapper = document.createElement('div');
+        dueDateWrapper.classList.add('dueDate-wrapper');
+        infoDiv.appendChild(dueDateWrapper);
+        const dueDateLabel = document.createElement('label');
+        dueDateLabel.textContent = 'Due By:';
         const dueDate = document.createElement('input');
         dueDate.classList.add('dueDate-entry');
         dueDate.type = 'date';
-        infoDiv.appendChild(dueDate);
-        const priority = document.createElement('select');
-        priority.classList.add('priority-entry');
-        const options = ['Low', 'Medium', 'High'];
-        options.forEach(option => {
-            const opt = document.createElement('option');
-            opt.value = option;
-            opt.textContent = option;
-            priority.appendChild(opt);
-        });
-        infoDiv.appendChild(priority);
+        dueDateWrapper.appendChild(dueDateLabel);
+        dueDateWrapper.appendChild(dueDate);
         
-        svg.addEventListener('click', () => {
-            console.log(title.value, description.value, dueDate.value, priority.value);
-            ui.submitTaskInfoNew(title.value, description.value, dueDate.value, priority.value);
-        });
-    }
-
+        const priorityWrapper = document.createElement('fieldset');
+        priorityWrapper.classList.add('priority-wrapper');
+        infoDiv.appendChild(priorityWrapper);
+        const priorityLabel = document.createElement('legend');
+        priorityLabel.textContent = 'Priority:';
+        priorityWrapper.appendChild(priorityLabel);
+        const p_ul = document.createElement('ul');
+        p_ul.classList.add('priority-ul');
+        priorityWrapper.appendChild(p_ul);
+        const ratings = [
+            {
+                rank: 'Low',
+                color: '#31C969'
+            },
+            {
+                rank: 'Medium',
+                color: '#FACB52'
+            },
+            {
+                rank: 'High',
+                color: '#EF4444'
+            }
+        ]
+        ratings.forEach(rating => {
+            const priority = document.createElement('li');
+            priority.classList.add(rating.rank);
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = 'priority';
+            input.value = rating.rank;
+            const label = document.createElement('label');
+            label.textContent = rating.rank;
+            label.style.backgroundColor = rating.color;
+            priority.appendChild(input);
+            priority.appendChild(label);
+            p_ul.appendChild(priority);
+    });
+    
+        svg.removeEventListener('click', handleTaskSubmit); 
+        svg.addEventListener('click', handleTaskSubmit);
+    
+        function handleTaskSubmit() {
+            const priorityInput = document.querySelector('input[name="priority"]:checked');
+            if (title.value && description.value && dueDate.value && priorityInput) {
+                console.log("Task Info: ", title.value, description.value, dueDate.value, priorityInput.value);
+    
+                ui.submitTaskInfoNew(title.value, description.value, dueDate.value, priorityInput.value);
+    
+                title.value = '';
+                description.value = '';
+                dueDate.value = '';
+            }
+        }
+    };
+    
     submitTaskInfoNew = function (title, description, dueDate, priority) {
         const header = document.querySelector('.info-head');
         header.textContent = 'Task Info';
+        
         const svg = document.querySelector('.info-svg');
         svg.src = editIcon;
-
+    
         const newTask = app.addTodoNew(title, description, dueDate, priority);
+        
         const taskElement = document.createElement('li');
         taskElement.classList.add('task');
-
+        
+        const info = document.createElement('div');
+        info.classList.add('this-info');
+        taskElement.appendChild(info);
+        
+        const symbols = document.createElement('div');
+        symbols.classList.add('symbols');
+        taskElement.appendChild(symbols);
+        
         const roundCheck = document.createElement('div');
         roundCheck.classList.add('round');
         const checkbox = document.createElement('input');
@@ -350,43 +443,78 @@ class UIEditor {
         checkbox.id = checkboxId;
         const label = document.createElement('label');
         label.setAttribute('for', checkbox.id);  
-                
+        
         roundCheck.appendChild(checkbox);
         roundCheck.appendChild(label);
-        taskElement.appendChild(roundCheck);
-
+        info.appendChild(roundCheck);
+    
         const taskTitle = document.createElement('span');
         taskTitle.classList.add('task-title');
         taskTitle.textContent = newTask.title;
-        taskElement.appendChild(taskTitle);
-
+        info.appendChild(taskTitle);
+    
         const del = document.createElement('img');
         del.classList.add('delete');
         del.src = deleteIcon;
+    
+        const apriority = document.createElement('span');
+        apriority.classList.add('priority');
+        apriority.textContent = '•';
+    
+        if (newTask.priority === 'Low') {
+            apriority.style.color = '#31C969';
+        }
+        else if (newTask.priority === 'Medium') {
+            apriority.style.color = '#FACB52';
+        }
+        else if (newTask.priority === 'High') {
+            apriority.style.color = '#EF4444';
+        }
+        info.appendChild(apriority);
 
+        const TdueDate = document.createElement('span');
+        TdueDate.classList.add('dueDate');
+        TdueDate.textContent = newTask.dueDate;
+        info.appendChild(TdueDate);
+    
         this.taskList.appendChild(taskElement);
-        taskElement.appendChild(del);
-
+        symbols.appendChild(del);
+    
         app.showTaskInfo(newTask.title);
-    }
+    }    
 
     showTaskInfo = function (task) {
+        const svg = document.querySelector('.info-svg');
+        svg.src = editIcon;
+
         const infoDiv = document.querySelector('.info-div');
         infoDiv.innerHTML = '';
         infoDiv.dataset.id = task.id;
         const title = document.querySelector('.info-head');
         title.textContent = task.title;
+
+        const descriptionHeading = document.createElement('h4');
+        descriptionHeading.textContent = 'Description:';
         const description = document.createElement('p');
         description.classList.add('task-info-description');
         description.textContent = task.description;
+        infoDiv.appendChild(descriptionHeading);
         infoDiv.appendChild(description);
+
+        const dueDateHeading = document.createElement('h4');
+        dueDateHeading.textContent = 'Due Date:';
         const dueDate = document.createElement('p');
         dueDate.classList.add('task-info-dueDate');
         dueDate.textContent = task.dueDate;
+        infoDiv.appendChild(dueDateHeading);
         infoDiv.appendChild(dueDate);
+
+        const priorityHeading = document.createElement('h4');
+        priorityHeading.textContent = 'Priority:';
         const priority = document.createElement('p');
         priority.classList.add('task-info-priority');
         priority.textContent = task.priority;
+        infoDiv.appendChild(priorityHeading);
         infoDiv.appendChild(priority);
     };
 
