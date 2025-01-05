@@ -37,7 +37,7 @@ class Application {
                         id: 1,
                         title: 'Wash dishes',
                         description: 'Wash the dishes in the sink',
-                        dueDate: '2025-01-31',
+                        dueDate: '2025-01-02',
                         priority: 'Low',
                         completed: false
                     },
@@ -45,7 +45,7 @@ class Application {
                         id: 2,
                         title: 'Do laundry',
                         description: 'Wash clothes',
-                        dueDate: '2025-01-22',
+                        dueDate: '2025-01-05',
                         priority: 'Medium',
                         completed: false
                     },
@@ -66,7 +66,7 @@ class Application {
                         id: 4,
                         title: 'Learn JavaScript',
                         description: 'Learn JavaScript',
-                        dueDate: '2025-01-31',
+                        dueDate: '2025-01-06',
                         priority: 'Low',
                         completed: false
                     },
@@ -150,18 +150,8 @@ class Application {
     completeTodo = function (title) {
         const todo = this.currentProject.toDos.find(todo => todo.title === title);
         if (todo) {
-            todo.completed = true;
+            todo.completed = !todo.completed;
         }
-        ui.completeTask(title);
-        };
-
-    uncompleteTodo = function (title) {
-        const todo = this.currentProject.toDos.find(todo => todo.title === title);
-        console.log('uncompleting')
-        if (todo) {
-            todo.completed = false;
-        }
-        ui.uncompleteTask(title);
         };
 
     showTaskInfo = function (title) {
@@ -184,19 +174,52 @@ class UIEditor {
         this.projects = document.querySelectorAll('.project');
         this.tasks = document.querySelectorAll('.task');
         this.infoDiv = document.querySelector('.taskInfo');
+        this.addTask = document.querySelector('.add-task-beta');
+        this.addButton = document.querySelector('.add-beta');
+
+        this.addButton.addEventListener('click', () => {
+            const addDivElement = document.querySelector('.add-div');
+            if (addDivElement) {
+                return;
+            } else {
+            const parentDiv = document.querySelector('.addNew');
+            const addDiv = document.createElement('div');
+            addDiv.classList.add('add-div');
+            addDiv.innerHTML = '';
+            const projectName = document.createElement('input');
+            const projectButton = document.createElement('button');
+            projectButton.classList.add('project-button');
+            projectButton.textContent = '+';
+            projectName.classList.add('project-name');
+            projectName.type = 'text';
+            projectName.placeholder = 'Enter your project...';
+            addDiv.appendChild(projectName);
+            addDiv.appendChild(projectButton);
+            parentDiv.appendChild(addDiv);
+            console.log(projectName);
+
+            projectButton.addEventListener('click', () => {
+                if (projectName.value) {
+                    ui.addProject(projectName.value);
+                    ui.getProject(projectName.value);
+                    addDiv.remove();
+                }
+            }
+        )};
+        });
+        
+        this.addTask.addEventListener('click', () => {
+            ui.addTaskNew();
+        });
 
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('checkbox')) {
                 const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
-                event.target.classList.toggle('checkbox-ticked');
-                event.target.classList.remove('checkbox');
+                for (const a of document.querySelectorAll("span")) {
+                            if (a.textContent.includes(taskTitle)) {
+                                a.classList.toggle('completed');
+                            }};
                 app.completeTodo(taskTitle);
-            }
-            else if (event.target.classList.contains('checkbox-ticked')) {
-                const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
-                event.target.classList.toggle('checkbox');
-                event.target.classList.remove('checkbox-ticked');
-                app.uncompleteTodo(taskTitle);
             }
         });
 
@@ -341,7 +364,7 @@ class UIEditor {
         svg.src = tickIcon;
         
         const infoDiv = document.querySelector('.info-div');
-        infoDiv.innerHTML = '';  // Clear existing task inputs
+        infoDiv.innerHTML = '';  
         
         const titleWrapper = document.createElement('div');
         titleWrapper.classList.add('title-wrapper');
@@ -533,61 +556,31 @@ class UIEditor {
         priority.textContent = task.priority;
         infoDiv.appendChild(priorityHeading);
         infoDiv.appendChild(priority);
+
+        const editButton = document.querySelector('.info-svg');
+
+        editButton.addEventListener('click', () => {
+            ui.editTaskInfo();
+        });
     };
 
     editTaskInfo = function (type) {
-        if (type === 'title') {
-            const title = document.querySelector('.task-info-title');
-            const titleEntry = document.createElement('input');
-            titleEntry.classList.add('title-entry');
-            this.infoDiv.replaceChild(titleEntry, title);
-            console.log('editing title');
-        }
-        else if (type === 'description') {
-            const description = document.querySelector('.task-info-description');
-            const descEntry = document.createElement('input');
-            descEntry.classList.add('desc-entry');
-            this.infoDiv.replaceChild(descEntry, description);
-        }
-        else if (type === 'dueDate') {
-            const dueDate = document.querySelector('.task-info-dueDate');
-            const dueDateEntry = document.createElement('input');
-            dueDateEntry.type = 'date';
-            dueDateEntry.classList.add('dueDate-entry');
-            this.infoDiv.replaceChild(dueDateEntry, dueDate);
-        }
-        else if (type === 'priority') {
-            const priority = document.querySelector('.task-info-priority');
-            const priorityEntry = document.createElement('select');
-            priorityEntry.classList.add('priority-entry');
-            const options = ['Low', 'Medium', 'High'];
-            options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option;
-                opt.textContent = option;
-                priorityEntry.appendChild(opt);
-            });
-            this.infoDiv.replaceChild(priorityEntry, priority);
-        }
-        };
+        const parentDiv = document.querySelector('.info-div');
+        parentDiv.innerHTML = '';
+        const editForm = document.createElement('form');
+        editForm.classList.add('edit-form');
 
-    // TODO: Handle this in CSS instead
-    completeTask = function (title) {
-        console.log(title);
-        for (const a of document.querySelectorAll("span")) {
-            if (a.textContent.includes(title)) {
-                a.style.textDecoration = 'line-through';
-            }
-        }
+        const titleDiv = document.createElement('div');
+        titleDiv.classList.add('edit-title-div');
+        const titleInput = document.createElement('input');
+        titleInput.classList.add('edit-input');
+        titleInput.name = 'Task name';
+        titleInput.type = 'text';
+        titleInput.placeholder = 'Edit...';
+        titleDiv.appendChild(titleInput);
+        editForm.appendChild(titleDiv);
+        parentDiv.appendChild(editForm);
         };
-
-    uncompleteTask = function (title) {
-        for (const a of document.querySelectorAll("span")) {
-            if (a.textContent.includes(title)) {
-                a.style.textDecoration = 'none';
-            }
-        }
-        }
 };
 
 // Main
@@ -595,21 +588,3 @@ const app = new Application();
 const ui = new UIEditor();
 
 ui.getProject('Daily Life');
-
-// TODO: Add modal here instead of pop-up prompt
-const addButton = document.querySelector('.add-beta');
-addButton.addEventListener('click', () => {
-    const projectName = prompt("Enter the new project name:");
-    console.log(projectName);
-    if (projectName) {
-        ui.addProject(projectName);
-        ui.getProject(projectName);
-    }
-});
-
-// TODO: Add functionality here
-const addTask = document.querySelector('.add-task-beta');
-addTask.addEventListener('click', () => {
-    console.log("working");
-    ui.addTaskNew();
-});
