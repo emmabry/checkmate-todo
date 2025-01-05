@@ -1,4 +1,8 @@
 import "./styles.css";
+import tickIcon from './assets/tick.svg';
+import editIcon from './assets/edit.svg';
+import deleteIcon from './assets/delete.svg';
+import { ro } from "date-fns/locale";
 
 class ToDo {
     static idCounter = 4;
@@ -112,11 +116,11 @@ class Application {
         return newProject;
         };
 
-    addTodo = function (name) {
-        const newToDo = new ToDo(name, "Add description...", "Add date...", "Add priority...");
+    addTodoNew = function (title, description, dueDate, priority) {
+        const newToDo = new ToDo(title, description, dueDate, priority);
         this.currentProject.toDos.push(newToDo);
         return newToDo;
-        };
+        }
 
     removeTodo = function (title) {
         this.currentProject.toDos = this.currentProject.toDos.filter(todo => todo.title !== title);
@@ -166,13 +170,13 @@ class UIEditor {
 
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('checkbox')) {
-                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
                 event.target.classList.toggle('checkbox-ticked');
                 event.target.classList.remove('checkbox');
                 app.completeTodo(taskTitle);
             }
             else if (event.target.classList.contains('checkbox-ticked')) {
-                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
                 event.target.classList.toggle('checkbox');
                 event.target.classList.remove('checkbox-ticked');
                 app.uncompleteTodo(taskTitle);
@@ -181,9 +185,9 @@ class UIEditor {
 
         this.taskList.addEventListener('click', (event) => {
             if (event.target.classList.contains('delete')) {
-                const taskTitle = event.target.parentElement.querySelector('.task-title').textContent;
+                const taskTitle = event.target.closest('.task').querySelector('.task-title').textContent;
                 app.removeTodo(taskTitle);
-                event.target.parentElement.remove();
+                event.target.closest('.task').remove();
             }
         });
 
@@ -236,32 +240,52 @@ class UIEditor {
 
     getProject = function (title) {
             this.taskList.innerHTML = '';
+            const header = document.querySelector('.proj-name-header');
+            header.textContent = title
             let currentProject = app.getProject(title);
             currentProject.toDos.forEach(toDo => {
                 const task = document.createElement('li');
                 task.classList.add('task');
+                const info = document.createElement('div');
+                info.classList.add('this-info');
+                task.appendChild(info);
+                const symbols = document.createElement('div');
+                symbols.classList.add('symbols');
+                task.appendChild(symbols);
+
+                const roundCheck = document.createElement('div');
+                roundCheck.classList.add('round');
+                
+                const checkbox = document.createElement('input');
+                checkbox.classList.add('checkbox');
+                checkbox.type = 'checkbox';
+                const checkboxId = 'checkbox-' + Math.random().toString(36).substr(2, 9); 
+                checkbox.id = checkboxId;
+                
+                const label = document.createElement('label');
+                label.setAttribute('for', checkbox.id); 
+                
+                roundCheck.appendChild(checkbox);
+                roundCheck.appendChild(label);
+                
+                info.appendChild(roundCheck);          
 
                 const taskTitle = document.createElement('span');
                 taskTitle.classList.add('task-title');
                 taskTitle.textContent = toDo.title;
-                task.appendChild(taskTitle);
+                info.appendChild(taskTitle);
 
-                const del = document.createElement('button');
+                const del = document.createElement('img');
                 del.classList.add('delete');
-                del.textContent = 'Delete';
+                del.src = deleteIcon;
+                symbols.appendChild(del);
 
-                const checkbox = document.createElement('input');
-                checkbox.classList.add('checkbox');
-                checkbox.type = 'checkbox';
-                task.appendChild(checkbox);
-
-                task.appendChild(del);
                 this.taskList.appendChild(task);
             });
     };
 
     addProject = function (name) {
-        const newProject = app.addProject(name.value);
+        const newProject = app.addProject(name);
         const newButton = document.createElement('button');
         newButton.classList.add('project');
         newButton.textContent = newProject.title;
@@ -269,44 +293,89 @@ class UIEditor {
             ui.getProject(newButton.textContent);
         })
         this.projectButtons.appendChild(newButton);
-        name.value = '';
     };
 
-    addTask = function (name) {
-        const newTask = app.addTodo(taskName.value);
+    addTaskNew = function () {
+        const header = document.querySelector('.info-head');
+        header.textContent = 'New Task';
+        const svg = document.querySelector('.info-svg');
+        svg.src = tickIcon;
+        const infoDiv = document.querySelector('.info-div');
+        infoDiv.innerHTML = '';
+        const title = document.createElement('input');
+        title.classList.add('title-entry');
+        title.placeholder = 'Title';
+        infoDiv.appendChild(title);
+        const description = document.createElement('input');
+        description.classList.add('desc-entry');
+        description.placeholder = 'Description';
+        infoDiv.appendChild(description);
+        const dueDate = document.createElement('input');
+        dueDate.classList.add('dueDate-entry');
+        dueDate.type = 'date';
+        infoDiv.appendChild(dueDate);
+        const priority = document.createElement('select');
+        priority.classList.add('priority-entry');
+        const options = ['Low', 'Medium', 'High'];
+        options.forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            priority.appendChild(opt);
+        });
+        infoDiv.appendChild(priority);
+        
+        svg.addEventListener('click', () => {
+            console.log(title.value, description.value, dueDate.value, priority.value);
+            ui.submitTaskInfoNew(title.value, description.value, dueDate.value, priority.value);
+        });
+    }
 
+    submitTaskInfoNew = function (title, description, dueDate, priority) {
+        const header = document.querySelector('.info-head');
+        header.textContent = 'Task Info';
+        const svg = document.querySelector('.info-svg');
+        svg.src = editIcon;
+
+        const newTask = app.addTodoNew(title, description, dueDate, priority);
         const taskElement = document.createElement('li');
         taskElement.classList.add('task');
+
+        const roundCheck = document.createElement('div');
+        roundCheck.classList.add('round');
+        const checkbox = document.createElement('input');
+        checkbox.classList.add('checkbox');
+        checkbox.type = 'checkbox';
+        const checkboxId = 'checkbox-' + Math.random().toString(36).substr(2, 9); 
+        checkbox.id = checkboxId;
+        const label = document.createElement('label');
+        label.setAttribute('for', checkbox.id);  
+                
+        roundCheck.appendChild(checkbox);
+        roundCheck.appendChild(label);
+        taskElement.appendChild(roundCheck);
 
         const taskTitle = document.createElement('span');
         taskTitle.classList.add('task-title');
         taskTitle.textContent = newTask.title;
         taskElement.appendChild(taskTitle);
 
-        const del = document.createElement('button');
+        const del = document.createElement('img');
         del.classList.add('delete');
-        del.textContent = 'Delete';
-
-        const checkbox = document.createElement('input');
-        checkbox.classList.add('checkbox');
-        checkbox.type = 'checkbox';
-        taskElement.appendChild(checkbox);
+        del.src = deleteIcon;
 
         this.taskList.appendChild(taskElement);
         taskElement.appendChild(del);
-        taskName.value = '';
 
         app.showTaskInfo(newTask.title);
-    };
+    }
 
     showTaskInfo = function (task) {
-        const infoDiv = document.querySelector('.taskInfo');
+        const infoDiv = document.querySelector('.info-div');
         infoDiv.innerHTML = '';
         infoDiv.dataset.id = task.id;
-        const title = document.createElement('h2');
-        title.classList.add('task-info-title');
+        const title = document.querySelector('.info-head');
         title.textContent = task.title;
-        infoDiv.appendChild(title);
         const description = document.createElement('p');
         description.classList.add('task-info-description');
         description.textContent = task.description;
@@ -356,29 +425,6 @@ class UIEditor {
             this.infoDiv.replaceChild(priorityEntry, priority);
         }
         };
-    
-    submitTaskInfo = function () {
-        const taskID = this.infoDiv.dataset.id;
-        const task = app.currentProject.toDos.find(todo => todo.id == taskID);
-
-        if (this.infoDiv.querySelector('.title-entry')) {
-            task.title = this.infoDiv.querySelector('.title-entry').value;
-            const listTitle = document.querySelector('.task-title');
-            listTitle.textContent = task.title;
-        }
-        if (this.infoDiv.querySelector('.desc-entry')) {
-            task.description = this.infoDiv.querySelector('.desc-entry').value;
-        }
-        if (this.infoDiv.querySelector('.dueDate-entry')) {
-            task.dueDate = this.infoDiv.querySelector('.dueDate-entry').value;
-        }
-        if (this.infoDiv.querySelector('.priority-entry')) {
-            task.priority = this.infoDiv.querySelector('.priority-entry').value;
-        }
-
-        ui.showTaskInfo(task);
-
-        }
 
     // TODO: Handle this in CSS instead
     completeTask = function (title) {
@@ -405,16 +451,20 @@ const ui = new UIEditor();
 
 ui.getProject('Default');
 
-const addButton = document.querySelector('.add-project');
+// TODO: Add modal here instead of pop-up prompt
+const addButton = document.querySelector('.add-beta');
 addButton.addEventListener('click', () => {
-    const name = document.querySelector('.project-name');
-    const newProject = name.value;
-    ui.addProject(name);
-    ui.getProject(newProject);
+    const projectName = prompt("Enter the new project name:");
+    console.log(projectName);
+    if (projectName) {
+        ui.addProject(projectName);
+        ui.getProject(projectName);
+    }
 });
 
-const addTask = document.querySelector('.add-task');
-const taskName = document.querySelector('.task-name');
+// TODO: Add functionality here
+const addTask = document.querySelector('.add-task-beta');
 addTask.addEventListener('click', () => {
-    ui.addTask(taskName.value);
+    console.log("working");
+    ui.addTaskNew();
 });

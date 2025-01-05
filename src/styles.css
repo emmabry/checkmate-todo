@@ -2,6 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
+    background-color: #F2F2F3;
 }
 
 .projects {
@@ -9,16 +10,15 @@ body {
     flex-direction: column;
     justify-content: stretch;
     height: 100vh;
-    background-color: #F8F9FA;
-    width: 15%;
-    padding: 20px; 
+    background-color: white;
+    width: 20%;
 }
 
 .logo {
     display: flex;
     justify-content: start;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
 }
 
 .logo img {
@@ -32,12 +32,43 @@ body {
 .project-buttons {
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    margin: 0px;
 }
 
-.project-buttons * {
-    margin: 5px;
-    font-size: 16px;
+.header {
+    padding-inline: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header .add {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+    position: relative;
+    bottom: 2px;
+}
+
+.header .info-svg {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    position: relative;
+    bottom: 4px;
+}
+
+.project-buttons button {
+    margin: 0px;
+    font-size: 20px;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    padding: 20px;
+}
+
+.project-buttons button:hover {
+    background-color: #E9ECEF;
 }
 
 .container {
@@ -53,23 +84,153 @@ body {
 }
 
 .top-bar {
-    background-color: #F8F9FA;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
     border: 1px solid #E9ECEF;
     border-radius: 40px;
-    padding: 10px;
+    padding-inline: 30px;
+    width: 25%;
+    margin: 10px;
+    -webkit-box-shadow: 6px 5px 15px -2px rgba(0,0,0,0.28); 
+    box-shadow: 6px 5px 15px -2px rgba(0,0,0,0.28);
+}
+
+.divider {
+    border: 1px solid #E9ECEF;
+    height: 40%;
     margin: 10px;
 }
 
+.top-bar img {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+    position: relative;
+    bottom: 2px;
+}
 .taskDiv {
     display: flex;
     justify-content: center;
 }
 
 .current-tasks, .taskInfo {
-    background-color: #F8F9FA;
+    background-color: white;
     border: 1px solid #E9ECEF;
     border-radius: 20px;
     padding: 10px;
     width: 100%;
     margin: 10px;
+    box-shadow: 6px 5px 15px -2px rgba(0,0,0,0.28);
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    padding-inline: 15px;
+}
+
+.info-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-inline: 15px;
+    padding-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.todo-list {
+    border-top: 1px solid #E9ECEF;
+}
+
+.round {
+    position: relative;
+}
+
+.round label {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+    display: block;
+}
+
+.round label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 8px;
+    opacity: 0;
+    position: absolute;
+    top: 9px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+.round input[type="checkbox"] {
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+}
+
+.round input[type="checkbox"]:checked + label {
+    background-color: #66bb6a;
+    border-color: #66bb6a;
+}
+
+.round input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
+label:hover {
+    background-color: #bbb; /* Darker background on hover */
+}
+
+label {
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 10px;
+    border-bottom: 1px solid #E9ECEF;
+}
+
+.task-title {
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    top: 1px;
+}
+
+.task:hover {
+    background-color: #E9ECEF;
+}
+.task * {
+    margin: 5px;
+}
+
+.delete {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 1px;
+}
+
+.this-info {
+    display: flex;
+    align-items: center;
 }
