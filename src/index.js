@@ -2,7 +2,7 @@ import "./styles.css";
 import tickIcon from './assets/tick.svg';
 import editIcon from './assets/edit.svg';
 import deleteIcon from './assets/delete.svg';
-import { ro } from "date-fns/locale";
+import { format, isToday, differenceInDays, parseISO } from 'date-fns';
 
 class ToDo {
     static idCounter = 4;
@@ -30,19 +30,6 @@ class Projects {
 class Application {
     constructor() {
         this.allProjects = [
-            {
-                title: 'Default',
-                toDos: [
-                    {
-                        id: 0,
-                        title: 'Default',
-                        description: 'This is a default task',
-                        dueDate: '2025-01-31',
-                        priority: 'Medium',
-                        completed: false
-                    }
-                ]   
-            },
             {
                 title: 'Daily Life',
                 toDos: [
@@ -109,6 +96,36 @@ class Application {
         this.currentProject = this.allProjects.find(proj => proj.title === project);
         return this.currentProject;
     }
+
+    checkDate = function (dateString) {
+        const date = parseISO(dateString);
+        
+        if (isToday(date)) {
+            return "Today";
+        }
+
+        const dateAtMidnight = new Date(date.setHours(0, 0, 0, 0));
+        const todayAtMidnight = new Date(new Date().setHours(0, 0, 0, 0));
+        const daysDifference = differenceInDays(dateAtMidnight, todayAtMidnight);
+        if (daysDifference === 1) {
+            return "In 1 day";
+        }
+        if (daysDifference === -1) {
+            return "Overdue 1 day";
+        }
+        if (daysDifference > 1 && daysDifference <= 7) {
+            return `In ${daysDifference} days`;
+        }
+        if (daysDifference < -1 && daysDifference >= -7) {
+            return `Overdue ${Math.abs(daysDifference)} days`;
+        }
+        if (daysDifference === 0) {
+            return "Today";
+        }
+        if (daysDifference > 7) {
+            return format(date, 'dd-MM-yyyy');
+        }
+    };
     
     addProject = function (name) {
         const newProject = new Projects(name);
@@ -293,7 +310,7 @@ class UIEditor {
 
                 const dueDate = document.createElement('span');
                 dueDate.classList.add('dueDate');
-                dueDate.textContent = toDo.dueDate;
+                dueDate.textContent = app.checkDate(toDo.dueDate);
                 info.appendChild(dueDate);
 
                 const del = document.createElement('img');
@@ -474,7 +491,7 @@ class UIEditor {
 
         const TdueDate = document.createElement('span');
         TdueDate.classList.add('dueDate');
-        TdueDate.textContent = newTask.dueDate;
+        TdueDate.textContent = app.checkDate(newTask.dueDate);
         info.appendChild(TdueDate);
     
         this.taskList.appendChild(taskElement);
@@ -505,7 +522,7 @@ class UIEditor {
         dueDateHeading.textContent = 'Due Date:';
         const dueDate = document.createElement('p');
         dueDate.classList.add('task-info-dueDate');
-        dueDate.textContent = task.dueDate;
+        dueDate.textContent = app.checkDate(task.dueDate);
         infoDiv.appendChild(dueDateHeading);
         infoDiv.appendChild(dueDate);
 
@@ -577,7 +594,7 @@ class UIEditor {
 const app = new Application();
 const ui = new UIEditor();
 
-ui.getProject('Default');
+ui.getProject('Daily Life');
 
 // TODO: Add modal here instead of pop-up prompt
 const addButton = document.querySelector('.add-beta');
