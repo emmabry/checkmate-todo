@@ -3,6 +3,7 @@ import tickIcon from './assets/tick.svg';
 import editIcon from './assets/edit.svg';
 import deleteIcon from './assets/delete.svg';
 import { format, isToday, differenceInDays, parseISO } from 'date-fns';
+import { se } from "date-fns/locale";
 
 class ToDo {
     static idCounter = 4;
@@ -156,11 +157,17 @@ class Application {
 
     showTaskInfo = function (title) {
         const task = this.currentProject.toDos.find(todo => todo.title === title);
-        console.log(task);
         ui.showTaskInfo(task);
         }
 
-    editTaskInfo = function () {
+    editTaskInfo = function (id, title, description, dueDate, priority) {
+        const task = this.currentProject.toDos.find(todo => todo.id === id);
+        task.title = title;
+        task.description = description;
+        task.dueDate = dueDate;
+        task.priority = priority;
+        app.showTaskInfo(task.title);
+        ui.getProject(this.currentProject.title);
         }
     
     changePriority = function () {
@@ -176,6 +183,10 @@ class UIEditor {
         this.infoDiv = document.querySelector('.taskInfo');
         this.addTask = document.querySelector('.add-task-beta');
         this.addButton = document.querySelector('.add-beta');
+        this.delProject = document.querySelector('.del-project');
+        this.delProject.addEventListener('click', () => {
+            ui.deleteProject();
+            });
 
         this.addButton.addEventListener('click', () => {
             const addDivElement = document.querySelector('.add-div');
@@ -436,22 +447,21 @@ class UIEditor {
             priority.appendChild(label);
             p_ul.appendChild(priority);
     });
-    
+    function handleTaskSubmit() {
+        const priorityInput = document.querySelector('input[name="priority"]:checked');
+        if (title.value && description.value && dueDate.value && priorityInput) {
+            console.log("Task Info: ", title.value, description.value, dueDate.value, priorityInput.value);
+
+            ui.submitTaskInfoNew(title.value, description.value, dueDate.value, priorityInput.value);
+
+            title.value = '';
+            description.value = '';
+            dueDate.value = '';
+        }
+    }
         svg.removeEventListener('click', handleTaskSubmit); 
         svg.addEventListener('click', handleTaskSubmit);
     
-        function handleTaskSubmit() {
-            const priorityInput = document.querySelector('input[name="priority"]:checked');
-            if (title.value && description.value && dueDate.value && priorityInput) {
-                console.log("Task Info: ", title.value, description.value, dueDate.value, priorityInput.value);
-    
-                ui.submitTaskInfoNew(title.value, description.value, dueDate.value, priorityInput.value);
-    
-                title.value = '';
-                description.value = '';
-                dueDate.value = '';
-            }
-        }
     };
     
     submitTaskInfoNew = function (title, description, dueDate, priority) {
@@ -564,23 +574,120 @@ class UIEditor {
         });
     };
 
-    editTaskInfo = function (type) {
-        const parentDiv = document.querySelector('.info-div');
-        parentDiv.innerHTML = '';
-        const editForm = document.createElement('form');
-        editForm.classList.add('edit-form');
+    editTaskInfo = function () {
+        const infoDiv = document.querySelector('.info-div');
+        console.log(infoDiv.dataset.id);
+        const task = app.currentProject.toDos.find(todo => todo.id === parseInt(infoDiv.dataset.id));
+        infoDiv.innerHTML = '';  
+        const svg = document.querySelector('.info-svg');
+        svg.src = tickIcon;
+        
+        const titleWrapper = document.createElement('div');
+        titleWrapper.classList.add('title-wrapper');
+        infoDiv.appendChild(titleWrapper);
+        const titleLabel = document.createElement('label');
+        titleLabel.textContent = 'Title:';
+        titleWrapper.appendChild(titleLabel);
+        const title = document.createElement('textarea');
+        title.classList.add('title-entry');
+        title.value = task.title;
+        titleWrapper.appendChild(title);
+        
+        const descriptionWrapper = document.createElement('div');
+        descriptionWrapper.classList.add('description-wrapper');
+        infoDiv.appendChild(descriptionWrapper);
+        const descriptionLabel = document.createElement('label');
+        descriptionLabel.textContent = 'Description:';
+        descriptionWrapper.appendChild(descriptionLabel);
+        const description = document.createElement('textarea');
+        description.classList.add('desc-entry');
+        description.value = task.description;
+        descriptionWrapper.appendChild(description);
+        
+        const dueDateWrapper = document.createElement('div');
+        dueDateWrapper.classList.add('dueDate-wrapper');
+        infoDiv.appendChild(dueDateWrapper);
+        const dueDateLabel = document.createElement('label');
+        dueDateLabel.textContent = 'Due By:';
+        const dueDate = document.createElement('input');
+        dueDate.classList.add('dueDate-entry');
+        dueDate.type = 'date';
+        dueDate.value = task.dueDate;
+        dueDateWrapper.appendChild(dueDateLabel);
+        dueDateWrapper.appendChild(dueDate);
+        
+        const priorityWrapper = document.createElement('fieldset');
+        priorityWrapper.classList.add('priority-wrapper');
+        infoDiv.appendChild(priorityWrapper);
+        const priorityLabel = document.createElement('legend');
+        priorityLabel.textContent = 'Priority:';
+        priorityWrapper.appendChild(priorityLabel);
+        const p_ul = document.createElement('ul');
+        p_ul.classList.add('priority-ul');
+        priorityWrapper.appendChild(p_ul);
+        const ratings = [
+            {
+                rank: 'Low',
+                color: '#31C969'
+            },
+            {
+                rank: 'Medium',
+                color: '#FACB52'
+            },
+            {
+                rank: 'High',
+                color: '#EF4444'
+            }
+        ]
+        let selectedPriority = null;
+        ratings.forEach(rating => {
+            const priority = document.createElement('li');
+            priority.classList.add(rating.rank);
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = 'priority';
+            input.value = rating.rank;
+            const label = document.createElement('label');
+            label.textContent = rating.rank;
+            label.style.backgroundColor = rating.color;
+            priority.appendChild(input);
+            input.addEventListener('click', () => {
+                selectedPriority = input.value;
+            });
+            priority.appendChild(label);
+            p_ul.appendChild(priority);
+            if (rating.rank === task.priority) {
+                input.checked = true;
+            }
+    });
 
-        const titleDiv = document.createElement('div');
-        titleDiv.classList.add('edit-title-div');
-        const titleInput = document.createElement('input');
-        titleInput.classList.add('edit-input');
-        titleInput.name = 'Task name';
-        titleInput.type = 'text';
-        titleInput.placeholder = 'Edit...';
-        titleDiv.appendChild(titleInput);
-        editForm.appendChild(titleDiv);
-        parentDiv.appendChild(editForm);
+    svg.removeEventListener('click', handleTaskEditSubmit); 
+    svg.addEventListener('click', handleTaskEditSubmit);
+    
+        function handleTaskEditSubmit() {
+            if (title.value && description.value && dueDate.value && selectedPriority) {
+                app.editTaskInfo(task.id, title.value, description.value, dueDate.value, selectedPriority);
+                title.value = '';
+                description.value = '';
+                dueDate.value = '';
+            }
+        }
         };
+
+    deleteProject = function () {
+        const project = app.currentProject.title;
+        app.allProjects = app.allProjects.filter(proj => proj.title !== project);
+        if (app.allProjects.length > 0) {
+            ui.getProject(app.allProjects[0].title);
+            const projectButton = Array.from(document.querySelectorAll('.project')).find(button => button.textContent === project);
+            if (projectButton) {
+            projectButton.remove();
+            }
+        }
+        else {
+            return;
+        }
+    }
 };
 
 // Main

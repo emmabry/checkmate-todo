@@ -28,11 +28,22 @@
             <div class="top-bar">
                 <h2 class="proj-name-header">Default</h2>
                 <div class="divider"></div>
-                <p>Sort</p>
+                <div class="header-button sort">
+                    <img class="sort-svg" src="3cdd4dcbc9828d9ce20c.svg"/>
+                    <button class="sort-button">Sort</button>
+                    <div id="dropdown-sort" class="dropdown hidden">
+                        <button class="drop-option" data-sort-by="priority">Priority</button>
+                            <button class="drop-option" data-sort-by="title">Title</button>
+                            <button class="drop-option" data-sort-by="due">Due</button>
+                        </div>
+                </div>
                 <div class="divider"></div>
-                <p>Check</p>
+                <div class="header-button check">
+                    <img class="check-svg" src="ebc642fe584ea510f39c.svg"/>
+                    <button class="check-button">Check</button>
+                </div>
                 <div class="divider"></div>
-                <img src="e17251a64892f7f0ed3d.svg"/>
+                <img class="del-project" src="e17251a64892f7f0ed3d.svg"/>
             </div>
         <div class="taskDiv">
             <div class="current-tasks">
@@ -60,5 +71,5 @@
     </div>
     </div>
 </body>
-<script src="6f1f69b9b96b0b2ad2f3.js"></script>
+<script src="5f9f6a28f48023338c43.js"></script>
 </html>
