@@ -3,6 +3,7 @@ import tickIcon from './assets/tick.svg';
 import editIcon from './assets/edit.svg';
 import deleteIcon from './assets/delete.svg';
 import { format, isToday, differenceInDays, parseISO } from 'date-fns';
+import { se } from "date-fns/locale";
 
 class ToDo {
     static idCounter = 4;
@@ -634,6 +635,7 @@ class UIEditor {
                 color: '#EF4444'
             }
         ]
+        let selectedPriority = null;
         ratings.forEach(rating => {
             const priority = document.createElement('li');
             priority.classList.add(rating.rank);
@@ -645,21 +647,22 @@ class UIEditor {
             label.textContent = rating.rank;
             label.style.backgroundColor = rating.color;
             priority.appendChild(input);
+            input.addEventListener('click', () => {
+                selectedPriority = input.value;
+            });
             priority.appendChild(label);
             p_ul.appendChild(priority);
             if (rating.rank === task.priority) {
                 input.checked = true;
             }
     });
-    svg.removeEventListener('click', handleTaskSubmit); 
-    svg.addEventListener('click', handleTaskSubmit);
+
+    svg.removeEventListener('click', handleTaskEditSubmit); 
+    svg.addEventListener('click', handleTaskEditSubmit);
     
-        function handleTaskSubmit() {
-            const priorityInput = document.querySelector('input[name="priority"]:checked');
-            if (title.value && description.value && dueDate.value && priorityInput) {
-    
-                app.editTaskInfo(task.id, title.value, description.value, dueDate.value, priorityInput.value);
-    
+        function handleTaskEditSubmit() {
+            if (title.value && description.value && dueDate.value && selectedPriority) {
+                app.editTaskInfo(task.id, title.value, description.value, dueDate.value, selectedPriority);
                 title.value = '';
                 description.value = '';
                 dueDate.value = '';
