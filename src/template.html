@@ -27,11 +27,22 @@
         <div class="main-page">
             <div class="top-bar">
                 <h2 class="proj-name-header">Default</h2>
-                <div class="divider"></div>
-                <p>Sort</p>
-                <div class="divider"></div>
-                <p>Check</p>
-                <div class="divider"></div>
+                <div class="divider hidden"></div>
+                <div class="header-button sort hidden">
+                    <img class="sort-svg" src="sort.svg"/>
+                    <button class="sort-button">Sort</button>
+                    <div id="dropdown-sort" class="dropdown hidden">
+                        <button class="drop-option" data-sort-by="priority">Priority</button>
+                            <button class="drop-option" data-sort-by="title">Title</button>
+                            <button class="drop-option" data-sort-by="due">Due</button>
+                        </div>
+                </div>
+                <div class="hidden divider"></div>
+                <div class="header-button hidden check">
+                    <img class="check-svg" src="check.svg"/>
+                    <button class="check-button">Check</button>
+                </div>
+                <div class="hidden divider"></div>
                 <img class="del-project" src="./assets/delete.svg"/>
             </div>
         <div class="taskDiv">
