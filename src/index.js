@@ -183,6 +183,10 @@ class UIEditor {
         this.infoDiv = document.querySelector('.taskInfo');
         this.addTask = document.querySelector('.add-task-beta');
         this.addButton = document.querySelector('.add-beta');
+        this.delProject = document.querySelector('.del-project');
+        this.delProject.addEventListener('click', () => {
+            ui.deleteProject();
+            });
 
         this.addButton.addEventListener('click', () => {
             const addDivElement = document.querySelector('.add-div');
@@ -669,6 +673,21 @@ class UIEditor {
             }
         }
         };
+
+    deleteProject = function () {
+        const project = app.currentProject.title;
+        app.allProjects = app.allProjects.filter(proj => proj.title !== project);
+        if (app.allProjects.length > 0) {
+            ui.getProject(app.allProjects[0].title);
+            const projectButton = Array.from(document.querySelectorAll('.project')).find(button => button.textContent === project);
+            if (projectButton) {
+            projectButton.remove();
+            }
+        }
+        else {
+            return;
+        }
+    }
 };
 
 // Main
